@@ -9,4 +9,3 @@ It seems that it doesn't step into the dash() function at all.
 
 
 
-![image](https://github.com/cr-skl/ECE-5725-proj/assets/113873340/6f45f5d6-4b57-478f-a8f2-137fd8caf938)

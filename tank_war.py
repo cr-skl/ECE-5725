@@ -145,8 +145,6 @@ class TankWar:
             # 松开下键
             self.hero.direction = Settings.DOWN
             self.hero.is_moving = False
-        elif event.key == pygame.K_d:
-            self.hero.dash()
 
     def __event_handler(self):
         for event in pygame.event.get():

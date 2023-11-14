@@ -4,6 +4,11 @@ import pygame
 from threading import Thread
 from settings import Settings
 
+class timer():
+    def __init__(self,start_time):
+        self.start_time = start_time
+    def calc(self):
+        return time.time() > self.start_time 
 
 class BaseSprite(pygame.sprite.Sprite):
     """
@@ -27,6 +32,12 @@ class BaseSprite(pygame.sprite.Sprite):
             self.rect.y -= self.speed
         elif self.direction == Settings.DOWN:
             self.rect.y += self.speed
+
+class Star(BaseSprite):
+    def __init__(self, image_name, screen):
+        super().__init__(image_name, screen)
+
+        self.speed = 0
 
 
 class Bullet(BaseSprite):
@@ -52,18 +63,20 @@ class TankSprite(BaseSprite):
         射击类，坦克调用该类发射子弹
         :return:
         """
-
-        # 把消失的子弹移除
-        self.__remove_sprites()
         if not self.is_alive:
             return
-        if len(self.bullets) >= 3:
-            return
+        # 把消失的子弹移除
+        self.__remove_sprites()
+        
+        # if len(self.bullets) >= 3:
+        #     return
         if self.type == Settings.HERO:
             pygame.mixer.music.load(Settings.FIRE_MUSIC)
             pygame.mixer.music.play()
 
-        # 发射子弹
+        # shoot bullet
+        # if self.magicbullet:
+            # code here for the effect of magic bullet
         bullet = Bullet(Settings.BULLET_IMAGE_NAME, self.screen)
         bullet.direction = self.direction
         if self.direction == Settings.LEFT:
@@ -133,6 +146,9 @@ class Hero(TankSprite):
         self.direction = Settings.UP
         self.is_hit_wall = False
 
+        self.unbeatable = False
+        self.life = 3
+
         # 初始化英雄的位置
         self.rect.centerx = Settings.SCREEN_RECT.centerx - Settings.BOX_RECT.width * 2
         self.rect.bottom = Settings.SCREEN_RECT.bottom
@@ -156,6 +172,21 @@ class Hero(TankSprite):
         self.is_alive = False
         self.boom()
 
+    def dash(self):
+        print("dash begin")
+        # t = Thread(target = self.dash_helper)
+        # t.start()
+        print("dash end")
+    def dash_helper(self):
+        quick_speed = 5
+        if self.direction == Settings.LEFT:
+            self.rect.x -= quick_speed
+        elif self.direction == Settings.RIGHT:
+            self.rect.x += quick_speed
+        elif self.direction == Settings.UP:
+            self.rect.y -= quick_speed
+        elif self.direction == Settings.DOWN:
+            self.rect.y += quick_speed
 
 class Enemy(TankSprite):
 

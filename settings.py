@@ -53,9 +53,10 @@ class Settings:
         DOWN: "./resources/images/hero/hero1D.gif"
     }
     HERO_SPEED = 2
-    BOSS_IMAGE = "./resources/images/5.png"
+    
     # 我方老家
-
+    BOSS_IMAGE = "./resources/images/5.png"
+    
     # 敌方坦克
     ENEMY_IMAGES = {
         LEFT: "./resources/images/enemy/enemy2L.gif",
@@ -75,6 +76,7 @@ class Settings:
     RED_WALL = 1
     IRON_WALL = 2
     WEED_WALL = 3
+    SEA_WALL = 4
     BOSS_WALL = 5
     WALLS = [
         f"resources/images/walls/{file}" for file in os.listdir("resources/images/walls/")
@@ -84,3 +86,6 @@ class Settings:
     BOOMS = [
         "resources/images/boom/" + file for file in os.listdir("resources/images/boom")
     ]
+
+    STAR_IMG = "./resources/images/star/star.gif"
+    STAR = 6

@@ -39,6 +39,10 @@ class Star(BaseSprite):
 
         self.speed = 0
 
+class Health(BaseSprite):
+    def __init__(self, image_name, screen):
+        super().__init__(image_name,screen)
+        self.speed = 0
 
 class Bullet(BaseSprite):
 

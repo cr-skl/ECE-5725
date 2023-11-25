@@ -18,7 +18,10 @@ class TankWar:
         self.walls = None
         self.stars = None
         self.star = None
+        self.healths= None
+        self.health = None
         self.updateStars = True
+        self.updateHealth = True
 
     @staticmethod
     def __init_game():
@@ -35,6 +38,7 @@ class TankWar:
         self.heros = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.stars = pygame.sprite.Group()
+        self.healths = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         # generate hero
         self.hero = Hero(Settings.HERO_IMAGE_NAME, self.screen)
@@ -94,7 +98,28 @@ class TankWar:
                     self.stars.add(star)
                     self.updateStars = False
                     return
-        
+
+    def __draw_health(self):
+        """
+        draw health at top left corner of window
+        """
+        if self.updateHealth:
+            while True:
+                x=1
+                y=0
+                for i in range(self.hero.life):
+                    health = Health(Settings.HEALTH_IMG, self.screen)
+                    health.rect.x = i*Settings.BOX_SIZE
+                    health.rect.y = y*Settings.BOX_SIZE
+                    self.map[y][i]= Settings.HEALTH
+                    self.health = health
+                    self.healths.add(health)
+                   
+                    # print(self.healths)
+
+                self.updateHealth = False
+                return
+            
 
 
 
@@ -230,6 +255,8 @@ class TankWar:
         # update the static thing 
         self.walls.update()
         self.stars.update()
+        self.healths.update()
+
 
 
         # update and show enemy tanks and each bullets
@@ -248,8 +275,16 @@ class TankWar:
         #self.screen.blit(self.hero.image, self.hero.rect)
 
 
+
+
         self.walls.draw(self.screen)
         self.stars.draw(self.screen)
+        self.healths.draw(self.screen)
+
+
+    def __update_health(self):
+        if self.hero.life< len(self.healths):
+            self.healths.remove(self.healths.sprites()[-1])
 
     def run_game(self):
         
@@ -262,14 +297,18 @@ class TankWar:
             # 1、设置刷新帧率
             self.clock.tick(Settings.FPS)
             self.__draw_star()
+            self.__draw_health()
             # 2、事件监听
             self.__event_handler()
             # 3、碰撞监测
             self.__check_collide()
+            self.__update_health()
             # 4、更新/绘制精灵/经理组
+            # if self.hero.life != len()
             self.__update_sprites()
             # 5、更新显示
             pygame.display.update()
+            print(len(self.healths))
         self.__game_over()
 
     @staticmethod

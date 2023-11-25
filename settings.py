@@ -6,10 +6,10 @@ class Settings:
 
     # 游戏设置
     FPS = 60    # 游戏帧率
-    GAME_NAME = "坦克大战"  # 游戏标题
-    BOX_SIZE = 50   # 单位屏幕大小
+    GAME_NAME = "Tank Wars"  # 游戏标题
+    BOX_SIZE = 60   # 单位屏幕大小
     BOX_RECT = Rect(0, 0, BOX_SIZE, BOX_SIZE)   # 单位屏幕矩形
-    SCREEN_RECT = Rect(0, 0, BOX_SIZE * 19, BOX_SIZE * 13)  # 屏幕矩形
+    SCREEN_RECT = Rect(0, 0, BOX_SIZE * 19, BOX_SIZE * 14)  # 屏幕矩形
     SCREEN_COLOR = (0, 0, 0)    # 屏幕颜色
 
     # 通用变量
@@ -20,6 +20,7 @@ class Settings:
 
     # 地图
     MAP_ONE = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
         [0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, ],
         [0, 1, 0, 0, 1, 3, 3, 1, 1, 2, 1, 1, 3, 3, 1, 0, 0, 1, 0, ],
@@ -89,3 +90,8 @@ class Settings:
 
     STAR_IMG = "./resources/images/star/star.gif"
     STAR = 6
+
+    HEALTH_IMG = "./resources/images/health/health.png"
+    HEALTH = 7
+
+

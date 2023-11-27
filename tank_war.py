@@ -219,6 +219,14 @@ class TankWar:
                     self.hero.is_hit_wall = True
                     # 移出墙内
                     self.hero.move_out_wall(wall)
+            
+
+        for health in self.healths:
+            if pygame.sprite.collide_rect(self.hero, health):
+                self.hero.is_hit_wall = True
+                self.hero.move_out_health(health)
+
+            
 
             # enemies
             for enemy in self.enemies:
@@ -226,6 +234,11 @@ class TankWar:
                     if wall.type == Settings.RED_WALL or wall.type == Settings.IRON_WALL or wall.type == Settings.BOSS_WALL:
                         enemy.move_out_wall(wall)
                         enemy.random_turn()
+            for health in self.healths:
+                if pygame.sprite.collide_rect(health, enemy):
+                    enemy.move_out_health(health)
+                    enemy.random_turn()
+
 
         # hero bullets collide with enemies
         pygame.sprite.groupcollide(self.hero.bullets, self.enemies, True, True)

@@ -107,6 +107,16 @@ class TankSprite(BaseSprite):
         elif self.direction == Settings.DOWN:
             self.rect.bottom = wall.rect.top - 2
 
+    def move_out_health(self, health):
+        if self.direction == Settings.LEFT:
+            self.rect.left = health.rect.right + 2
+        elif self.direction == Settings.RIGHT:
+            self.rect.right = health.rect.left - 2
+        elif self.direction == Settings.UP:
+            self.rect.top = health.rect.bottom + 2
+        elif self.direction == Settings.DOWN:
+            self.rect.bottom = health.rect.top - 2
+
     def __remove_sprites(self):
         """
         移除无用的子弹

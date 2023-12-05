@@ -1,8 +1,5 @@
 import pygame
-import time
-import random
 from sprites import *
-from threading import Thread
 
 
 class TankWar:
@@ -34,12 +31,12 @@ class TankWar:
         pygame.mixer.init()    # 初始化音频模块
 
     def __create_sprite(self):
-        # generate groups 
         self.heros = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.stars = pygame.sprite.Group()
         self.healths = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
+
         # generate hero
         self.hero = Hero(Settings.HERO_IMAGE_NAME, self.screen)
         self.heros.add(self.hero)
@@ -56,24 +53,23 @@ class TankWar:
         绘制地图
         :return:
         """
-        for y in range(len(self.map)):
-            for x in range(len(self.map[y])):
-                if self.map[y][x] == 0:
+        for y in range(len(Settings.MAP_ONE)):
+            for x in range(len(Settings.MAP_ONE[y])):
+                if Settings.MAP_ONE[y][x] == 0:
                     continue
-                wall = Wall(Settings.WALLS[self.map[y][x]], self.screen)
+                wall = Wall(Settings.WALLS[Settings.MAP_ONE[y][x]], self.screen)
                 wall.rect.x = x*Settings.BOX_SIZE
                 wall.rect.y = y*Settings.BOX_SIZE
-                if self.map[y][x] == Settings.RED_WALL:
+                if Settings.MAP_ONE[y][x] == Settings.RED_WALL:
                     wall.type = Settings.RED_WALL
-                elif self.map[y][x] == Settings.IRON_WALL:
+                elif Settings.MAP_ONE[y][x] == Settings.IRON_WALL:
                     wall.type = Settings.IRON_WALL
-                elif self.map[y][x] == Settings.WEED_WALL:
+                elif Settings.MAP_ONE[y][x] == Settings.WEED_WALL:
                     wall.type = Settings.WEED_WALL
-                elif self.map[y][x] == Settings.BOSS_WALL:
+                elif Settings.MAP_ONE[y][x] == Settings.BOSS_WALL:
                     wall.type = Settings.BOSS_WALL
                     wall.life = 1
                 self.walls.add(wall)
-
     def endow_shield(self):
         print("shield acquired")
         self.hero.unbeatable = True
@@ -121,8 +117,6 @@ class TankWar:
                 return
             
 
-
-
     def __check_keydown(self, event):
         """检查按下按钮的事件"""
         if event.key == pygame.K_LEFT:
@@ -148,9 +142,10 @@ class TankWar:
         elif event.key == pygame.K_SPACE:
             # 坦克发子弹
             self.hero.shot()
-        elif event.key == pygame.K_d:
-            # Tank dash
-            self.hero.dash()
+        elif event.key == pygame.K_BACKSPACE:
+            self.hero.is_moving = True
+            self.hero.is_hit_wall = False
+            self.hero.is_dash = True
 
     def __check_keyup(self, event):
         """检查松开按钮的事件"""
@@ -170,13 +165,15 @@ class TankWar:
             # 松开下键
             self.hero.direction = Settings.DOWN
             self.hero.is_moving = False
+        elif event.key == pygame.K_BACKSPACE:
+            self.hero.is_moving = False
+            self.hero.is_dash = False
 
     def __event_handler(self):
         for event in pygame.event.get():
             # 判断是否是退出游戏
             if event.type == pygame.QUIT:
                 TankWar.__game_over()
-            # 判断按键按下
             elif event.type == pygame.KEYDOWN:
                 TankWar.__check_keydown(self, event)
             elif event.type == pygame.KEYUP:
@@ -262,8 +259,6 @@ class TankWar:
             t.start()
             self.updateStars = True
 
-
-
     def __update_sprites(self):
         # update the static thing 
         self.walls.update()
@@ -287,24 +282,18 @@ class TankWar:
         self.heros.draw(self.screen)
         #self.screen.blit(self.hero.image, self.hero.rect)
 
-
-
-
         self.walls.draw(self.screen)
         self.stars.draw(self.screen)
         self.healths.draw(self.screen)
-
 
     def __update_health(self):
         if self.hero.life< len(self.healths):
             self.healths.remove(self.healths.sprites()[-1])
 
+
     def run_game(self):
-        
         self.__init_game()
         self.__create_sprite()
-        current_time = time.time()
-
         while True and self.hero.is_alive and self.game_still:
             self.screen.fill(Settings.SCREEN_COLOR)
             # 1、设置刷新帧率
@@ -317,11 +306,10 @@ class TankWar:
             self.__check_collide()
             self.__update_health()
             # 4、更新/绘制精灵/经理组
-            # if self.hero.life != len()
             self.__update_sprites()
             # 5、更新显示
             pygame.display.update()
-            print(len(self.healths))
+            #print(len(self.healths))
         self.__game_over()
 
     @staticmethod

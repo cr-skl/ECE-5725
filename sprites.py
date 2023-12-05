@@ -4,11 +4,6 @@ import pygame
 from threading import Thread
 from settings import Settings
 
-class timer():
-    def __init__(self,start_time):
-        self.start_time = start_time
-    def calc(self):
-        return time.time() > self.start_time 
 
 class BaseSprite(pygame.sprite.Sprite):
     """
@@ -67,20 +62,18 @@ class TankSprite(BaseSprite):
         射击类，坦克调用该类发射子弹
         :return:
         """
-        if not self.is_alive:
-            return
+
         # 把消失的子弹移除
         self.__remove_sprites()
-        
-        # if len(self.bullets) >= 3:
-        #     return
+        if not self.is_alive:
+            return
+        if len(self.bullets) >= 3:
+            return
         if self.type == Settings.HERO:
             pygame.mixer.music.load(Settings.FIRE_MUSIC)
             pygame.mixer.music.play()
 
-        # shoot bullet
-        # if self.magicbullet:
-            # code here for the effect of magic bullet
+        # 发射子弹
         bullet = Bullet(Settings.BULLET_IMAGE_NAME, self.screen)
         bullet.direction = self.direction
         if self.direction == Settings.LEFT:
@@ -159,6 +152,7 @@ class Hero(TankSprite):
         self.speed = Settings.HERO_SPEED
         self.direction = Settings.UP
         self.is_hit_wall = False
+        self.is_dash = False
 
         self.unbeatable = False
         self.life = 3
@@ -168,7 +162,10 @@ class Hero(TankSprite):
         self.rect.bottom = Settings.SCREEN_RECT.bottom
 
     def __turn(self):
-        self.image = pygame.image.load(Settings.HERO_IMAGES.get(self.direction))
+        if not self.is_dash:
+            self.image = pygame.image.load(Settings.HERO_IMAGES.get(self.direction))
+        else:
+            self.image = pygame.image.load(Settings.DASH_HERO_IMAGES.get(self.direction))
 
     def hit_wall(self):
         if self.direction == Settings.LEFT and self.rect.left <= 0 or \
@@ -180,27 +177,17 @@ class Hero(TankSprite):
     def update(self):
         if not self.is_hit_wall:
             super().update()
+            
+            if self.is_dash :
+                for i in range(10):
+                    super().update()
+                # self.is_dash = False
             self.__turn()
 
     def kill(self):
         self.is_alive = False
         self.boom()
 
-    def dash(self):
-        print("dash begin")
-        # t = Thread(target = self.dash_helper)
-        # t.start()
-        print("dash end")
-    def dash_helper(self):
-        quick_speed = 5
-        if self.direction == Settings.LEFT:
-            self.rect.x -= quick_speed
-        elif self.direction == Settings.RIGHT:
-            self.rect.x += quick_speed
-        elif self.direction == Settings.UP:
-            self.rect.y -= quick_speed
-        elif self.direction == Settings.DOWN:
-            self.rect.y += quick_speed
 
 class Enemy(TankSprite):
 

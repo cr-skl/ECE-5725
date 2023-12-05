@@ -44,6 +44,11 @@ class TankWar:
         for i in range(Settings.ENEMY_COUNT):
             direction = random.randint(0, 3)
             enemy = Enemy(Settings.ENEMY_IMAGES[direction], self.screen)
+            y = random.randint(0, len(self.map)-1)
+            x = random.randint(0, len(self.map[y])-1)
+            if self.map[y][x] == 0:
+                enemy.rect.x = x*Settings.BOX_SIZE
+                enemy.rect.y = y*Settings.BOX_SIZE
             enemy.direction = direction
             self.enemies.add(enemy)
         self.__draw_map()
@@ -187,7 +192,7 @@ class TankWar:
 
         # wall is collided with bullets
         for wall in self.walls:
-            # hero bullets
+            # hero bullets hit wall
             for bullet in self.hero.bullets:
                 if pygame.sprite.collide_rect(wall, bullet):
                     if wall.type == Settings.RED_WALL:
@@ -197,7 +202,7 @@ class TankWar:
                         self.game_still = False
                     elif wall.type == Settings.IRON_WALL:
                         bullet.kill()
-            # enemy bullets
+            # enemy bullets hit wall
             for enemy in self.enemies:
                 for bullet in enemy.bullets:
                     if pygame.sprite.collide_rect(wall, bullet):
@@ -210,27 +215,24 @@ class TankWar:
                             bullet.kill()
 
             # Tanks colliding with walls, not going through the walls
-            # hero 
+            # hero hit wall
             if pygame.sprite.collide_rect(self.hero, wall):
                 if wall.type == Settings.RED_WALL or wall.type == Settings.IRON_WALL or wall.type == Settings.BOSS_WALL:
                     self.hero.is_hit_wall = True
-                    # 移出墙内
                     self.hero.move_out_wall(wall)
             
-
-        for health in self.healths:
-            if pygame.sprite.collide_rect(self.hero, health):
-                self.hero.is_hit_wall = True
-                self.hero.move_out_health(health)
-
-            
-
-            # enemies
+            # enemies hit wall
             for enemy in self.enemies:
                 if pygame.sprite.collide_rect(wall, enemy):
                     if wall.type == Settings.RED_WALL or wall.type == Settings.IRON_WALL or wall.type == Settings.BOSS_WALL:
                         enemy.move_out_wall(wall)
                         enemy.random_turn()
+
+        for health in self.healths:
+            if pygame.sprite.collide_rect(self.hero, health):
+                self.hero.is_hit_wall = True
+                self.hero.move_out_health(health)
+            
             for health in self.healths:
                 if pygame.sprite.collide_rect(health, enemy):
                     enemy.move_out_health(health)

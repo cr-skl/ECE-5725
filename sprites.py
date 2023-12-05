@@ -198,6 +198,7 @@ class Enemy(TankSprite):
         self.speed = Settings.ENEMY_SPEED
         self.direction = random.randint(0, 3)
         self.terminal = float(random.randint(40*2, 40*8))
+        
 
     def random_turn(self):
         # 随机转向
@@ -236,8 +237,8 @@ class Enemy(TankSprite):
             self.random_turn()
         else:
             super().update()
-            # 碰墙掉头
-            self.terminal -= self.speed
+            # every cycle,  make sure to turn directions after walking terminal blocks
+            self.terminal -=  self.speed
 
 
 class Wall(BaseSprite):

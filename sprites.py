@@ -28,10 +28,18 @@ class BaseSprite(pygame.sprite.Sprite):
         elif self.direction == Settings.DOWN:
             self.rect.y += self.speed
 
+    def draw(self):
+        # Draw the sprite on the screen
+        self.screen.blit(self.image, self.rect)
+
+class Pickaxe(BaseSprite):
+    def __init__(self, image_name, screen):
+        super().__init__(image_name, screen)
+        self.speed = 0
+
 class Star(BaseSprite):
     def __init__(self, image_name, screen):
         super().__init__(image_name, screen)
-
         self.speed = 0
 
 class Health(BaseSprite):
@@ -153,7 +161,7 @@ class Hero(TankSprite):
         self.direction = Settings.UP
         self.is_hit_wall = False
         self.is_dash = False
-
+        self.getpickaxe = False
         self.unbeatable = False
         self.life = 3
 
@@ -162,7 +170,9 @@ class Hero(TankSprite):
         self.rect.bottom = Settings.SCREEN_RECT.bottom
 
     def __turn(self):
-        if not self.is_dash:
+        if self.unbeatable:
+            self.image = pygame.image.load(Settings.SHIELD_HERO_IMAGE)
+        elif not self.is_dash:
             self.image = pygame.image.load(Settings.HERO_IMAGES.get(self.direction))
         else:
             self.image = pygame.image.load(Settings.DASH_HERO_IMAGES.get(self.direction))
@@ -247,6 +257,8 @@ class Wall(BaseSprite):
         super().__init__(image_name, screen)
         self.type = None
         self.life = 2
+        self.x = None
+        self.y = None
 
     def update(self):
         pass

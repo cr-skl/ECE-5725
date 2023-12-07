@@ -1,6 +1,7 @@
 import pygame
 import tkinter as tk
 from tkinter import filedialog
+
 from sprites import *
 
 
@@ -44,15 +45,6 @@ class Level1:
         self.healths= None
         self.health = None
         self.updateHealth = True
-
-        self.basex = None
-        self.basey = None
-
-        self.steelwall = [Settings.IRON_WALL] * 8
-
-        self.updateScore= True
-        self.score = 0
-        self.scoreprint = "Score" +  " " + str(self.score)
 
     @staticmethod
     def __init_game():
@@ -770,7 +762,9 @@ class Level2:
                 self.screen.blit(text_surface,rect)
                 self.updateScore=False
                 return
-            
+                
+
+        
     def __check_keydown(self, event):
         """检查按下按钮的事件"""
         if event.key == pygame.K_LEFT:
@@ -877,7 +871,15 @@ class Level2:
                     self.hero.is_hit_wall = True
                     self.hero.move_out_wall(wall)
             
-            # enemies hit wall
+
+            for health in self.healths:
+                if pygame.sprite.collide_rect(self.hero, health):
+                    self.hero.is_hit_wall = True
+                    self.hero.move_out_health(health)
+
+            
+
+            # enemies
             for enemy in self.enemies:
                 if pygame.sprite.collide_rect(wall, enemy):
                     if wall.type == Settings.RED_WALL or wall.type == Settings.IRON_WALL or wall.type == Settings.BOSS_WALL:
@@ -899,15 +901,14 @@ class Level2:
         # hero bullets collide with enemies
         score_track= pygame.sprite.groupcollide(self.hero.bullets, self.enemies, True, True)
         self.score+= len(score_track)*5
+        print(self.score)
         # enemies bullets collide with hero
         for enemy in self.enemies:
             if not self.hero.unbeatable:
                 collision = pygame.sprite.groupcollide(enemy.bullets, self.heros, True, False)
                 if collision != {} and self.hero.life > 0:
                     self.hero.life -= 1
-                    self.hero.rect.centerx = Settings.SCREEN_RECT.centerx - Settings.BOX_RECT.width * 2
-                    self.hero.rect.bottom = Settings.SCREEN_RECT.bottom
-                    print("life remainging :  ", self.hero.life)
+                    print("life remaining :  ", self.hero.life)
                 if self.hero.life == 0:
                     self.hero.kill()
                     self.heros.remove(self.hero)
@@ -936,6 +937,10 @@ class Level2:
         self.healths.update()
         self.__enemyrespawn()
 
+        
+
+
+
         # update and show enemy tanks and each bullets
         self.enemies.update()
         self.enemies.draw(self.screen)
@@ -957,6 +962,7 @@ class Level2:
         self.healths.draw(self.screen)
         self.__show_score()
 
+
     def __update_health(self):
         if self.hero.life< len(self.healths):
             self.healths.remove(self.healths.sprites()[-1])
@@ -966,6 +972,7 @@ class Level2:
         self.scoreprint = "Score" +  " " + str(self.score)
         self.__show_score()
 
+
     def __enemyrespawn(self):
         for i in range(Settings.ENEMY_COUNT-len(self.enemies)):
             direction = random.randint(0, 3)
@@ -974,6 +981,8 @@ class Level2:
             self.enemies.add(enemy)
 
     def __save_to_file(self):
+
+
         def save():
             if folder_path:
                     try:
@@ -990,6 +999,8 @@ class Level2:
                         file.write(text_content)
                         status_label.config(text=f"File saved")
                 
+
+
         root = tk.Tk()
         root.title("Text Editor")
 
@@ -1005,32 +1016,54 @@ class Level2:
         tk.Button(root, text="Quit", command=root.destroy).pack()
         file_path = "scores.txt"
         folder_path = filedialog.askdirectory()
-        root.mainloop()   
+       
+
+        root.mainloop()
+
+
+        
+       
+
+
+    
+
+
+
+    
+
+
+
 
     def run_game(self):
         self.__init_game()
         self.__create_sprite()
         self.__draw_walls()
         while True and self.hero.is_alive and self.game_still:
-            if not self.pause:
-                self.screen.fill(Settings.SCREEN_COLOR)
-                # 1、设置刷新帧率
-                self.clock.tick(Settings.FPS)
-                self.__draw_star()
-                self.__draw_pickaxe()
-                self.__draw_health()
-                print (self.updateScore)
-                # 2、事件监听
-                self.__event_handler()
-                # 3、碰撞监测
-                self.__check_collide()
-                self.__updatescore()
-                self.__update_health()
-                # 4、更新/绘制精灵/经理组
-                self.__update_sprites()
-                # 5、更新显示
-                pygame.display.update()
-                #print(len(self.healths))
+            self.screen.fill(Settings.SCREEN_COLOR)
+            # 1、设置刷新帧率
+            self.clock.tick(Settings.FPS)
+            self.__draw_star()
+            self.__draw_health()
+            print (self.updateScore)
+          
+            # 2、事件监听
+            self.__event_handler()
+            # 3、碰撞监测
+            self.__check_collide()
+            self.__updatescore()
+            self.__update_health()
+           
+            # 4、更新/绘制精灵/经理组
+            self.__update_sprites()
+            # 5、更新显示
+            pygame.display.update()
+            #print(len(self.healths))
+
+
+
+        
+
+        
         self.__save_to_file()
         self.__game_over()
 

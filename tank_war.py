@@ -46,6 +46,15 @@ class Level1:
         self.health = None
         self.updateHealth = True
 
+        self.basex=None
+        self.basey=None
+
+        self.steelwall = [Settings.IRON_WALL]*8
+        
+        self.updateScore=True
+        self.score=0
+        self.scoreprint="Score" + " " +str(self.score)
+
     @staticmethod
     def __init_game():
         """
